@@ -17,7 +17,11 @@ const Main = () => {
         className="w-full h-64 object-cover my-4"
       />
       <NavBar />
-      <Content />
+      <div className="mb-32">
+        {" "}
+        {/* Footer와의 간격 확보 */}
+        <Content />
+      </div>
       <Footer />
     </div>
   );

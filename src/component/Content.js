@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 
 // 오늘 날짜 기준으로 2주(14일)치 날짜 배열 생성
 const getNext14Days = () => {
   const days = [];
   const today = new Date(); // 오늘 날짜설정
   for (let i = 0; i < 14; i++) {
-    const date = new Date(today); 
+    const date = new Date(today);
     date.setDate(today.getDate() + i); // setDate는 일을 변경
     const dateStr = date.toISOString().slice(0, 10);
-    const weekDay = "일월화수목금토"[date.getDay()]; 
+    const weekDay = "일월화수목금토"[date.getDay()];
     days.push({
       label: `${dateStr} (${weekDay})`,
       value: dateStr,
@@ -47,30 +47,53 @@ const Dropdown = () => {
   );
 };
 
-
-
 const Content = () => {
   const dateList = getNext14Days();
   const [weekIndex, setWeekIndex] = useState(0); // 0: 첫째주, 1: 둘째주
   const weekDates = dateList.slice(weekIndex * 7, weekIndex * 7 + 7);
   const [selectedDate, setSelectedDate] = useState(weekDates[0]?.value || "");
   const [matchesByDate, setMatchesByDate] = useState({});
-  const [search, setSearch] = useState("")// 검색
-  
+  const [search, setSearch] = useState(""); // 검색
+  const [visibleCount, setVisibleCount] = useState(5); // 보여줄 매치 개수
+
+  const handleShowMore = () => {
+    setVisibleCount((prev) => prev + 5);
+  };
 
   // 날짜별 매치 데이터 fetch (처음 마운트될 때 전체를 받아온다고 가정)
   useEffect(() => {
-    fetch("/api/matchesByDate") // 실제 서버 API 주소로 변경 필요
+    fetch("http://cococoa.tplinkdns.com:44445/api/match/all") // 실제 서버 API 주소로 변경 필요
       .then((res) => res.json())
-      .then((data) => setMatchesByDate(data))
+      .then((data) => {
+        console.log(data)
+        const groupedMatches = {};
+        data.forEach(match => {
+          const date = match.date.slice(0, 10); // YYYY-MM-DD 형식으로 변환
+          // 날짜별로 매치 그룹화
+          if(!groupedMatches[date]) {
+            groupedMatches[date] = [];
+          }
+          groupedMatches[date].push(match);
+        });
+
+        setMatchesByDate(groupedMatches);
+      })
       .catch(() => setMatchesByDate({}));
+
   }, []);
 
+  useEffect(() => {
+    setVisibleCount(5);
+  }, [selectedDate, search]);
+
   const allMatches = matchesByDate[selectedDate] || [];
-  const matches = allMatches.filter((match) =>
-    match.name.includes(search) || match.location.includes(search)
-)
-  console.log(search)
+  const matches = allMatches.filter(
+    (match) => match.name.includes(search) || match.location.includes(search)
+  );
+  console.log(search);
+
+  // matches 배열에서 visibleCount 개수만큼 잘라서 보여줌
+  const visibleMatches = matches.slice(0, visibleCount);
 
   // 주간 이동 핸들러
   const goPrevWeek = () => setWeekIndex((prev) => Math.max(prev - 1, 0));
@@ -127,8 +150,10 @@ const Content = () => {
           />
           <button
             type="button"
-            className="ml-2 bg-sky-500 hover:bg-sky-700 text-white py-1 px-4 rounded-md text-sm">검색</button>
-          
+            className="ml-2 bg-sky-500 hover:bg-sky-700 text-white py-1 px-4 rounded-md text-sm"
+          >
+            검색
+          </button>
         </div>
       </div>
       <div className="flex flex-col items-center">
@@ -137,19 +162,31 @@ const Content = () => {
             해당 날짜에 등록된 매치가 없습니다.
           </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {matches.map((match) => (
+          <div className="flex flex-col gap-4 w-full max-w-6xl mx-auto">
+            {visibleMatches.map((match) => (
               <div
                 key={match.id}
-                className="border rounded-lg p-4 shadow bg-white"
+                className="border rounded-lg p-4 shadow bg-white w-full flex items-center justify-between"
               >
-                <h3 className="font-bold">{match.name}</h3>
-                <p>{match.location}</p>
-                <button className="mt-2 bg-sky-500 hover:bg-sky-700 text-white py-1 px-4 rounded">
+                <div>
+                  <h3 className="font-bold">{match.name}</h3>
+                  <p>{match.location}</p>
+                </div>
+                <button className="ml-4 bg-sky-500 hover:bg-sky-700 text-white py-1 px-4 rounded">
                   예약하기
                 </button>
               </div>
             ))}
+            {visibleCount < matches.length && (
+              <div className="flex justify-center mt-8 mb-32">
+                <button
+                  className="bg-sky-100 hover:bg-sky-300 text-sky-700 font-semibold py-2 px-6 rounded shadow"
+                  onClick={handleShowMore}
+                >
+                  매치 더 보기
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

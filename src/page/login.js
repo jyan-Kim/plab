@@ -20,7 +20,7 @@ function Login() {
 
  
 
-  
+
  
 
 
@@ -31,7 +31,7 @@ function Login() {
     if (id.trim() && password.trim()) {
       const bodyData = { email: id, password };
       console.log('로그인 요청 body:', bodyData); // body에 전달되는 내용 출력
-      fetch("http://checksabca.tplinkdns.com:44445/api/user/signin", {
+      fetch("http://cococoa.tplinkdns.com:44445/api/user/signin", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
