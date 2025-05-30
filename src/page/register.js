@@ -27,16 +27,13 @@ const Register = () => {
     surface: "",
   });
 
-  const [stadiumId, setStadiumId] = useState(null) // 구장 ID를 저장하기 위한 상태 변수
+  const [stadiumId, setStadiumId] = useState(null); // 구장 ID를 저장하기 위한 상태 변수
 
   const [message, setMessage] = useState(""); // 성공했을때 페이지에 표시되게 하기위해서? 미관상인듯
 
   const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
 
   const handleSubmit = async (e) => {
-  
- 
-  
     e.preventDefault();
     // 폼 제출 시 실행되는 함수
     if (
@@ -65,18 +62,19 @@ const Register = () => {
           name,
           location,
           facilities,
+          subFields: [subFields],
         }),
       }
     ).then((res) => res.json());
-    if (mainStadiumData.success === true || mainStadiumData.success === 'true') {
+    console.log(mainStadiumData);
+    if (mainStadiumData) {
       setStadiumId(mainStadiumData.stadiumId); // 메인 구장 ID 저장
       setMessage("구장 등록이 완료되었습니다.");
-    }else {
+    } else {
       setMessage(mainStadiumData.msg || "구장 등록 실패");
       return;
     }
-
-
+    /*
     const subStadiumData = await fetch(
       "http://cococoa.tplinkdns.com:44445/api/stadium/subField/add",
       {
@@ -100,6 +98,7 @@ const Register = () => {
       setMessage(subStadiumData.msg || "구장 세부 정보 등록 실패");
       return;
     }
+
 
     setMessage("구장 등록이 완료되었습니다.");
     setName("");
@@ -125,9 +124,8 @@ const Register = () => {
       surface: "",
     });
     setMessage("구장 등록이 완료되었습니다."); // 성공 메시지 설정
+        */
   };
-
-  
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
@@ -288,8 +286,26 @@ const Register = () => {
           />
           <label className="block mb-1 font-semibold">구장 크기 (m)</label>
           <div className="flex items-center gap-2 mb-2">
-          <input type="number" value={subFields.size.width} onChange={e => setSubFields({ ...subFields, size: { ...subFields.size, width: e.target.value } })} />
-          <input type="number" value={subFields.size.height} onChange={e => setSubFields({ ...subFields, size: { ...subFields.size, height: e.target.value } })} />
+            <input
+              type="number"
+              value={subFields.size.width}
+              onChange={(e) =>
+                setSubFields({
+                  ...subFields,
+                  size: { ...subFields.size, width: e.target.value },
+                })
+              }
+            />
+            <input
+              type="number"
+              value={subFields.size.height}
+              onChange={(e) =>
+                setSubFields({
+                  ...subFields,
+                  size: { ...subFields.size, height: e.target.value },
+                })
+              }
+            />
           </div>
           <div className="flex items-center gap-4 mb-2">
             <label className="flex items-center">
