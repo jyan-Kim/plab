@@ -4,9 +4,9 @@ import Login from "./page/login";
 import SignUp from "./page/signup";
 import Find from "./page/find";
 import Main from "./page/main";
-import Header from "./component/Header";
-import Footer from "./component/Footer";
 import Register from "./page/register";
+import Profile  from "./page/profile";
+
 
 function App() {
   return (
@@ -17,6 +17,7 @@ function App() {
         <Route path="/find" element={<Find />} />
         <Route path="/" element={<Main/>} />
         <Route path='register' element={<Register/>} />
+        <Route path='profile' element={<Profile/>} />
       </Routes>
     </>
   );

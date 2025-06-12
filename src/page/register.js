@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // 페이지 이동을 위한 useNavigate 훅
 
+import stadiumAPI from "../api/user"; // 구장 API 호출을 위한 모듈
+
 const Register = () => {
   // 구장 등록을 위한 상태 변수들
   const [name, setName] = useState("");
@@ -51,27 +53,13 @@ const Register = () => {
       return;
     }
     // 구장 등록 로직 (예: API 호출 등)
-    const mainStadiumData = await fetch(
-      "http://cococoa.tplinkdns.com:44445/api/stadium/add",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          location,
-          facilities,
-          subFields: [subFields],
-        }),
-      }
-    ).then((res) => res.json());
-    console.log(mainStadiumData);
-    if (mainStadiumData) {
-      setStadiumId(mainStadiumData.stadiumId); // 메인 구장 ID 저장
+    const res = await stadiumAPI.stadiumData();
+    console.log(res);
+    if (res.success) {
+      setStadiumId(res.stadiumId); // 메인 구장 ID 저장
       setMessage("구장 등록이 완료되었습니다.");
     } else {
-      setMessage(mainStadiumData.msg || "구장 등록 실패");
+      setMessage(res.msg || "구장 등록 실패");
       return;
     }
     /*
