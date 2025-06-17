@@ -49,6 +49,7 @@ const Content = () => {
 
   useEffect(() => {
     setVisibleCount(5);
+    // dateSubmit(new Date().toISOString().slice(0, 10)); // 오늘 날짜로 초기화
   }, [selectedDate, query]);
 
   // 주간 이동 핸들러

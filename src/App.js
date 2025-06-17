@@ -6,6 +6,7 @@ import Find from "./page/find";
 import Main from "./page/main";
 import Register from "./page/register";
 import Profile  from "./page/profile";
+import StadiumPage from "./page/stadium";
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/" element={<Main/>} />
         <Route path='register' element={<Register/>} />
         <Route path='profile' element={<Profile/>} />
+        
       </Routes>
     </>
   );

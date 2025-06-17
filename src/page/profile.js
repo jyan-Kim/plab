@@ -49,7 +49,6 @@ function Profile() {
                     ? URL.createObjectURL(profileImage)
                     : uploadedImageUrl
                 }
-                alt="Profile Preview"
                 className="w-32 h-32 rounded-full object-cover bg-gray-200 shadow-lg"
                 style={{ display: "block" }}
               />
