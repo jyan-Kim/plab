@@ -10,14 +10,12 @@ function SignUp() {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [name, setName] = useState("");
-  const [birth, setBirth] = useState(null);
+  const [birth, setBirth] = useState("");
   const [gender, setGender] = useState("");
 
   const navigate = useNavigate();
 
-
   // 회원가입 버튼 클릭 시 실행되는 함수
-
 
   const submitHandler = (e) => {
     e.preventDefault();

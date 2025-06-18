@@ -7,8 +7,6 @@ const BASE_URL = "http://cococoa.tplinkdns.com:44445";
 http://cococoa.tplinkdns.com:44445
 */
 
-  
-
 const USER = {
   login: async (email, password) => {
     const response = await fetch(`${BASE_URL}/api/user/signin`, {
@@ -17,6 +15,7 @@ const USER = {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, password }),
+      credentials: "include", // 쿠키 포함 옵션 추가
     });
     return response.json();
   },
@@ -28,6 +27,7 @@ const USER = {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, password, name, birth, gender }),
+      credentials: "include", // 쿠키 포함 옵션 추가(필요시)
     });
     return response.json();
   },
@@ -39,14 +39,13 @@ const USER = {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-          name,
-          location,
-          facilities,
-          subFields: [subFields],
+        name,
+        location,
+        facilities,
+        subFields: [subFields],
       }),
     });
     return response.json();
-
   },
   getAllMatches: async () => {
     const response = await fetch(`${BASE_URL}/api/match/all`, {

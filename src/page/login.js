@@ -24,11 +24,11 @@ function Login() {
       const bodyData = { email: id, password };
       console.log("로그인 요청 body:", bodyData); // body에 전달되는 내용 출력
 
-      const res = await userAPI.login();
+      const res = await userAPI.login(id, password);
 
       if (res.success) {
         alert(res.msg);
-        navigate("/"); // 로그인 성공 후 이동할 경로 설정
+        navigate("/main"); // 로그인 성공 후 이동할 경로 설정
         return;
       } else {
         alert(res.msg);
@@ -58,7 +58,7 @@ function Login() {
             </span>
             <input
               type="email"
-              name="id"
+              name="email"
               placeholder="이메일을 입력하세요"
               value={id}
               onChange={(e) => setId(e.target.value)}
