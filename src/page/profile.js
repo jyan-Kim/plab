@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useEffect } from "react";
+import userAPI from "../api/user";
+
 
 // 프로필 수정 페이지
 function Profile() {
@@ -14,7 +16,7 @@ function Profile() {
   const handleFileChange = (event) => {
     setProfileImage(event.target.files[0]); // 파일 선택 시 상태 업데이트
   };
-
+  // 사진 변경 (업로드) 
   const handleImgUpload = async () => {
     if (!profileImage) {
       alert("이미지를 선택해주세요");
@@ -72,7 +74,7 @@ function Profile() {
     fetchProfileData();
   }, []);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     // 프로필 수정 요청 보내기
     const profileData = {
@@ -80,14 +82,23 @@ function Profile() {
       birthdate,
       gender,
       introduction,
-      profileImage,
     };
+    try {
+      const result = await userAPI.updateProfile(profileData);
+      if (result.success) {
+        alert("프로필이 성공적으로 수정되었습니다.");
+      } else {
+        alert(result.msg || "프로필 수정에 실패했습니다.");
+      } 
+    } catch (error) {
+      alert("프로필 수정에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <div className="mb-6 border border-black-300 rounded-lg shadow-lg p-6 bg-white w-2/3 h-full">
-        <form>
+        <form onSubmit={onSubmit} className="flex flex-col items-center">
           {/*사진 div*/}
           <div className="flex flex-col items-center justify-center min-h-[300px]">
             <label

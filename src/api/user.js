@@ -56,6 +56,19 @@ const USER = {
     });
     return response.json();
   },
+
+  updateProfile: async (profileData) => {
+    const res = await fetch(`${BASE_URL}/api/user/update-profile`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(profileData),
+      credentials: "include",
+    });
+
+    return res.json();
+  }
 };
 
 export default USER;
