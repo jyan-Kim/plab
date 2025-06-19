@@ -58,45 +58,55 @@ const Header = () => {
       >
         풋살
       </h1>
-      {/*구장 검색 input*/}
-      <div className="relative w-96">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">
-          🔍
-        </span>
-        <input
-          type="text"
-          placeholder="구장 검색"
-          className="pl-10 px-4 py-2 rounded w-full text-black placeholder-gray-400"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        {/*구장 검색 결과*/}
-        {query && stadiumList.length > 0 && (
-          <ul className="absolute left-0 top-full mt-1 w-full bg-white border rounded shadow z-20 max-h-60 overflow-y-auto text-black">
-            {stadiumList.map((stadium) => (
-              <li
-                key={stadium.id}
-                className="px-4 py-2 hover:bg-sky-100 cursor-pointer text-sm"
-              >
-                {stadium.name}
-                <div>
-                <span className="text-xs text-gray-500 ml-2">
-                  {stadium.location.province}
-                </span>
-                <span className="text-xs text-gray-500 ml-2">
-                  {stadium.location.city}
-                </span>
-                <span className="text-xs text-gray-500 ml-2">
-                  {stadium.location.district}
-                </span>
-                <span className="text-xs text-gray-500 ml-2">
-                  {stadium.location.address}
-                </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+      <div className="flex items-center ml-auto">
+        {/*구장 검색 input*/}
+        <div className="relative w-96 mr-4">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">
+            🔍
+          </span>
+          <input
+            type="text"
+            placeholder="구장 검색"
+            className="pl-10 px-4 py-2 rounded w-full text-black placeholder-gray-400"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          {/*구장 검색 결과*/}
+          {query && stadiumList.length > 0 && (
+            <ul className="absolute left-0 top-full mt-1 w-full bg-white border rounded shadow z-20 max-h-60 overflow-y-auto text-black">
+              {stadiumList.map((stadium) => (
+                <li
+                  key={stadium.id}
+                  className="px-4 py-2 hover:bg-sky-100 cursor-pointer text-sm"
+                >
+                  {stadium.name}
+                  <div>
+                    <span className="text-xs text-gray-500 ml-2">
+                      {stadium.location.province}
+                    </span>
+                    <span className="text-xs text-gray-500 ml-2">
+                      {stadium.location.city}
+                    </span>
+                    <span className="text-xs text-gray-500 ml-2">
+                      {stadium.location.district}
+                    </span>
+                    <span className="text-xs text-gray-500 ml-2">
+                      {stadium.location.address}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        {/* 프로필 이모지 버튼 */}
+        <button
+          className="text-2xl bg-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-sky-100 transition"
+          onClick={() => navigate("/profile")}
+          title="프로필"
+        >
+          👤
+        </button>
       </div>
     </header>
   );

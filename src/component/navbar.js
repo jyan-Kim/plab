@@ -15,11 +15,6 @@ const NavBar = () => {
   return (
       <nav className="flex items-center justify-center gap-20 text-black p-4 mt-4">
         <button
-          onClick={() => navigate('/profile')}
-          className="border border-gray-400 rounded px-4 py-2 bg-gray-100 hover:bg-gray-200">
-          프로필
-        </button>
-        <button
           onClick={() => navigate('/')}
           className="border border-gray-400 rounded px-4 py-2 bg-gray-100 hover:bg-gray-200"
         >메인</button>
