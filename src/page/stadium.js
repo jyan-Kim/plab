@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import Header from '../component/Header';
+import Modal from '../component/Modal'; // 예약 모달 컴포넌트
+
 
 //서버로부터 구장사진을 받아옴
 //구장 정보 세부페이지
 const StadiumPage = () => {
   const [stadiumImageUrl, setStadiumImageUrl] = useState(''); // 구장 사진 URL 상태
   const [stadiumInfo, setStadiumInfo] = useState({}); // 구장 정보 상태
+  const [isModalOpen, setIsModalOpen] = useState(false); // 예약 모달 상태
 
   // 서버로부터 구장사진과 정보를 받아옴
   useEffect(() => {
@@ -22,6 +25,13 @@ const StadiumPage = () => {
     };
     fetchStadiumData();
   }, []);
+
+const handleReservation = (e) => {
+  e.preventDefault();
+  // 예약 처리 로직 작성
+  alert("예약이 완료되었습니다!");
+  setIsModalOpen(false);
+};
 
   return (
     <div>
@@ -45,7 +55,13 @@ const StadiumPage = () => {
         </div>
         <div>
           {/*날짜,위치,예약 (오른쪽 배치)*/}
-          <button>예약 하기</button>
+          <button onClick={() => setIsModalOpen(true)}>예약 하기</button>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <h2 className="text-lg font-bold mb-4">예약하기</h2>
+        <form onSubmit={handleReservation}>
+          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">예약</button>
+        </form>
+      </Modal>
         </div>
       </div>
     </div>
