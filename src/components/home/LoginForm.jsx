@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import USER from "../../api/user"; // 사용자 API 모듈
+
 import { useAuth } from "../../contexts/AuthContext";
 import UserProfile from "../common/ProfileCard";
 

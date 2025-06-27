@@ -1,9 +1,10 @@
-const BASE_URL = "http://cococoa.tplinkdns.com:44445";
+
 
 /*서버정보
 로그인 : /api/user/signin
 회원가입 :  /api/user/signup
 매치 : /api/match/all
+구장등록: /api/stadium
 http://cococoa.tplinkdns.com:44445
 */
 
@@ -11,7 +12,7 @@ const USER = {
   // 회원가입
   signup: async (email, password, name, birth, gender) => { // 파라미터 받는()
     try {
-      const res = await fetch(`${BASE_URL}/api/user/signup`, {
+      const res = await fetch(`/api/user/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -37,7 +38,7 @@ const USER = {
   // 로그인 
   login: async ( email, password) => {
     try {
-      const res = await fetch(`${BASE_URL}/api/user/signin`,{
+      const res = await fetch(`/api/user/signin`,{
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +61,7 @@ const USER = {
   // 모든 매치 정보 가져오기
   getAllMatches: async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/match/`, {
+      const res = await fetch(`/api/match/`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -73,6 +74,31 @@ const USER = {
       if (!res.ok) {
         const errorMessage =
           data.msg || data.message || "매치 정보를 가져오는 데 실패했습니다.";
+        throw new Error(errorMessage);
+      }
+
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  //구장등록 
+  registerStadium: async (name, location, subField, facilities) => {
+    try {
+      const res = await fetch(`/api/stadium`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ name, location, subField, facilities }),
+      });
+      // 서버에서 받아온 데이터 처리
+      const data = await res.json();
+
+      if (!res.ok) {
+        const errorMessage =
+          data.msg || data.message || "구장 등록에 실패했습니다.";
         throw new Error(errorMessage);
       }
 

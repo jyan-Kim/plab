@@ -1,17 +1,21 @@
 import MenuButton from "./MenuButton";
 import SignupModalContent from "../../modalContents/SignupModalContent";
+import RegisterModalContent from "../../modalContents/RegisterModalContent";
 import { useState } from "react";
 import Modal from "../common/Modal";
 import LoginForm from "./LoginForm";
 import { useAuth } from "../../contexts/AuthContext"; // 인증 상태 확인을 위한 컨텍스트
+import { useNavigate } from "react-router-dom";
 
 const HomeRight = () => {
   const [openModal, setOpenModal] = useState(null);
-  const {isAuthenticated} = useAuth(); // 인증 상태 확인
+  const { isAuthenticated } = useAuth(); // 인증 상태 확인
+  const navigate = useNavigate(); //
   // 모달 종류 정의
   const modalContents = {
-    signup : <SignupModalContent />,
-  }
+    signup: <SignupModalContent onClose={() => setOpenModal(null)} />,
+    Register: <RegisterModalContent onClose={() => setOpenModal(null)} />, // 구장 등록 모달
+  };
   return (
     <div className="flex flex-col gap-4">
       <Modal open={!!openModal} onClose={() => setOpenModal(null)}>
@@ -24,27 +28,47 @@ const HomeRight = () => {
           {isAuthenticated ? (
             //로그인된 사용자메뉴
             <>
-            <MenuButton icon="👤" label="내 프로필" onClick={() => alert("내 프로필 클릭")} />
-            <MenuButton icon="⚽" label="매치 신청" onClick={() => alert("매치 신청")} />
+              <MenuButton
+                icon="👤"
+                label="내 프로필"
+                onClick={() => alert("내 프로필 클릭")}
+              />
+              <MenuButton
+                icon="⚽"
+                label="매치 신청"
+                onClick={() => alert("매치 신청")}
+              />
             </>
-          ): (
+          ) : (
             // 게스트 사용자 메뉴
             <>
-            <MenuButton
-              icon="📝"
-              label="회원가입"
-              onClick={() => setOpenModal("signup")}
-            />
-            <MenuButton
-              icon="🔍"
-              label="ID/Password 찾기"
-              onClick={() => alert("아이디/비밀번호 찾기 클릭")}
-            />
-          </>
+              <MenuButton
+                icon="📝"
+                label="회원가입"
+                onClick={() => setOpenModal("signup")}
+              />
+              <MenuButton
+                icon="🔍"
+                label="ID/Password 찾기"
+                onClick={() => alert("아이디/비밀번호 찾기 클릭")}
+              />
+            </>
           )}
-           <MenuButton icon="🥅" label="구장 등록" onClick={() => alert("구장등록")} /> 
-           <MenuButton icon="📧" label="문의하기" onClick={() => alert("문의하기")} />
-           <MenuButton icon="ℹ️" label="도움말" onClick={() => alert("도움말")} />
+          <MenuButton
+            icon="🥅"
+            label="구장 등록"
+            onClick={() => setOpenModal("Register")}
+          />
+          <MenuButton
+            icon="📧"
+            label="문의하기"
+            onClick={() => alert("문의하기")}
+          />
+          <MenuButton
+            icon="ℹ️"
+            label="도움말"
+            onClick={() => alert("도움말")}
+          />
         </div>
       </div>
     </div>

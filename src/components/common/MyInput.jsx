@@ -1,4 +1,4 @@
-const SignupInput = ({ id, label, type = "text", placeholder, name, value, onChange }) => {
+const MyInput = ({ id, label, type = "text", placeholder, name, value, onChange }) => {
   return (
     <label className="flex items-center mb-5 min-w-0 w-full" htmlFor={id}>
       <span className="flex items-center h-10 w-40 text-blue-700 dark:text-cyan-200 font-semibold p-0">
@@ -17,4 +17,4 @@ const SignupInput = ({ id, label, type = "text", placeholder, name, value, onCha
   );
 };
 
-export default SignupInput;
+export default MyInput;

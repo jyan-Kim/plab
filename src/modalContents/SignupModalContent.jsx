@@ -1,4 +1,4 @@
-import SignupInput from "../components/common/SignupInput";
+import MyInput from "../components/common/MyInput";
 import GenderSelect from "../components/common/GenderSelect";
 import USER from "../api/user";
 import { useState,  } from "react";
@@ -51,8 +51,7 @@ const SignupModalContent = ({ onClose }) => {
         name: "",
         birth: "",
         gender: "",
-      });
-
+      })
       onClose();
     } catch (error) {
       alert(`회원가입 실패: ${error.message}`);
@@ -65,7 +64,7 @@ const SignupModalContent = ({ onClose }) => {
         <h2 className="text-2xl font-extrabold mb-6 text-center text-blue-600 dark:text-cyan-300 tracking-tight drop-shadow">
           회원가입
         </h2>
-        <SignupInput
+        <MyInput
           id="signup-email"
           name="email"
           label="E-mail"
@@ -74,7 +73,7 @@ const SignupModalContent = ({ onClose }) => {
           value={formData.email}
           onChange={handleChange}
         />
-        <SignupInput
+        <MyInput
           id="signup-password"
           name="password"
           label="비밀번호"
@@ -83,7 +82,7 @@ const SignupModalContent = ({ onClose }) => {
           value={formData.password}
           onChange={handleChange}
         />
-        <SignupInput
+        <MyInput
           id="signup-password-confirm"
           name="passwordConfirm"
           label="비밀번호 확인"
@@ -92,7 +91,7 @@ const SignupModalContent = ({ onClose }) => {
           value={formData.passwordConfirm}
           onChange={handleChange}
         />
-        <SignupInput
+        <MyInput
           id="signup-name"
           name="name"
           label="이름"
@@ -100,7 +99,7 @@ const SignupModalContent = ({ onClose }) => {
           value={formData.name}
           onChange={handleChange}
         />
-        <SignupInput
+        <MyInput
           id="signup-birth"
           name="birth"
           label="생년월일"
