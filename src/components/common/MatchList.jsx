@@ -9,11 +9,11 @@ const MatchList = ({ selectedDate }) => {
     try {
       // console.log('전송하는 날짜:', dateValue);
       // console.log('날짜 타입:', typeof dateValue);
-      // console.log('완전한 URL:', `http://cococoa.tplinkdns.com:44445/api/match?date=${dateValue}`);
+      // console.log('완전한 URL:', `/api/match?date=${dateValue}`);
 
-      const res = await fetch(
-        `http://cococoa.tplinkdns.com:44445/api/match?date=${dateValue}`
-      );
+      const res = await fetch(`/api/match?date=${dateValue}`, {
+        credentials: "include", // 쿠키 포함
+      });
       const data = await res.json();
 
       console.log("매치 데이터:", data);
@@ -23,6 +23,11 @@ const MatchList = ({ selectedDate }) => {
       }));
     } catch (error) {
       console.error("매치 목록을 가져오는 중 오류 발생:", error);
+      // 에러 상태 표시를 위해 빈 배열 설정
+      setMatchesByDate((prev) => ({
+        ...prev,
+        [dateValue]: [],
+      }));
     }
   };
   // 날짜 선택하면 매치목록 가져오기

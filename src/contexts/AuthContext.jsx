@@ -17,16 +17,18 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // 로그인 함수
+  // 로그인 함수 (쿠키 기반)
   const login = async (email, password) => {
     try {
       setIsLoading(true);
       const data = await USER.login(email, password);
       
-      if (data.token) {
-        localStorage.setItem('authToken', data.token);
-        setUser(data.user || { email });
+      // 서버에서 로그인 성공 응답이 오면 (쿠키는 자동으로 설정됨)
+      if (data.msg && data.msg.includes('성공')) {
+        setUser({ email });
         setIsAuthenticated(true);
+        // 쿠키 기반이므로 localStorage 대신 간단한 플래그만 저장
+        localStorage.setItem('isLoggedIn', 'true');
         return data;
       }
     } catch (error) {
@@ -36,21 +38,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 로그아웃 함수
+  // 로그아웃 함수 (쿠키 기반)
   const logout = () => {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('isLoggedIn');
     setUser(null);
     setIsAuthenticated(false);
+    // 실제로는 서버에 로그아웃 API 호출해서 쿠키를 삭제해야 함
   };
 
-  // 앱 시작 시 토큰 확인
+  // 앱 시작 시 로그인 상태 확인 (쿠키 기반)
   useEffect(() => {
     const checkAuthStatus = async () => {
-      const token = localStorage.getItem('authToken');
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
       
-      if (token) {
-        // 여기서는 간단히 토큰이 있으면 로그인된 것으로 처리
-        // 실제로는 서버에 토큰 검증 요청을 보내야 함
+      if (isLoggedIn === 'true') {
+        // 쿠키 기반이므로 단순히 플래그만 확인
         setIsAuthenticated(true);
         setUser({ email: 'user@example.com' }); // 임시 사용자 정보
       }

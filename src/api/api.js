@@ -1,8 +1,9 @@
-import USER from './user'
-
+import USER from "./user";
+import ADMIN from "./admin";
 
 const API = {
-  user: USER
-}
+  user: USER,
+  admin: ADMIN,
+};
 
 export default API;

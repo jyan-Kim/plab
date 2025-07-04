@@ -14,9 +14,10 @@ const SearchInput = () => {
     const fetchStadiumData = async () => {
       try {
         const res = await fetch(
-          `http://cococoa.tplinkdns.com:44445/api/search?keyword=${encodeURIComponent(
-            debouncedQuery
-          )}`
+          `/api/search?keyword=${encodeURIComponent(debouncedQuery)}`,
+          {
+            credentials: "include", // 쿠키 포함
+          }
         );
         if (!res.ok) {
           throw new Error("구장 데이터를 가져오는 데 실패했습니다.");
@@ -25,6 +26,7 @@ const SearchInput = () => {
         setStadiumData(data);
       } catch (error) {
         console.error("구장 데이터 가져오기 실패:", error);
+        setStadiumData([]); // 에러 시 빈 배열로 설정
       }
     };
     fetchStadiumData();

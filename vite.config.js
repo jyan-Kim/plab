@@ -5,6 +5,7 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   server: {
+    port: 5173, // 포트를 5173으로 고정
     proxy: {
       "/api": {
         target: "http://cococoa.tplinkdns.com:44445",

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import USER from "../api/user";
 
-
 const RegisterModalContent = ({ onClose }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -48,13 +47,9 @@ const RegisterModalContent = ({ onClose }) => {
     }
   };
 
-
   return (
     <div className="max-w-md w-full rounded-xl shadow-2xl p-8 border border-transparent dark:border-gray-700 bg-gradient-to-br from-blue-50 via-white to-blue-100 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
-      <form
-        className="w-full"
-        onSubmit={handleSubmit}
-      >
+      <form className="w-full" onSubmit={handleSubmit}>
         <h2 className="text-2xl font-extrabold mb-6 text-center text-blue-600 dark:text-cyan-300 tracking-tight drop-shadow">
           구장등록
         </h2>

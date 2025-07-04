@@ -1,23 +1,23 @@
-
-
 /*서버정보
 로그인 : /api/user/signin
 회원가입 :  /api/user/signup
 매치 : /api/match/all
 구장등록: /api/stadium
+유저정보 가져오기: /api/user/get-user-detail
 http://cococoa.tplinkdns.com:44445
 */
 
 const USER = {
   // 회원가입
-  signup: async (email, password, name, birth, gender) => { // 파라미터 받는()
+  signup: async (email, password, name, birth, gender) => {
+    // 파라미터 받는()
     try {
       const res = await fetch(`/api/user/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        // 데이터 전송
+        // 사용자가 입력한 데이터 전송
         body: JSON.stringify({ email, password, name, birth, gender }),
         credentials: "include",
       });
@@ -35,19 +35,20 @@ const USER = {
       throw error;
     }
   },
-  // 로그인 
-  login: async ( email, password) => {
+  // 로그인
+  login: async (email, password) => {
     try {
-      const res = await fetch(`/api/user/signin`,{
+      const res = await fetch(`/api/user/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
         credentials: "include",
-      })
+      });
       // 서버에서 받아온 데이터 처리
       const data = await res.json();
+      console.log("로그인 전체 응답 데이터:", data);
       if (!res.ok) {
         const errorMessage =
           data.msg || data.message || "로그인에 실패했습니다.";
@@ -82,7 +83,7 @@ const USER = {
       throw error;
     }
   },
-  //구장등록 
+  //구장등록
   registerStadium: async (name, location, subField, facilities) => {
     try {
       const res = await fetch(`/api/stadium`, {
@@ -106,7 +107,95 @@ const USER = {
     } catch (error) {
       throw error;
     }
-  }
+  },
+  // 유저 정보 가져오기 (비밀번호 확인 이후)
+  getUserDetail: async (password) => {
+    try {
+      const res = await fetch(`/api/user/get-user-detail`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password }),
+        credentials: "include",
+      });
+      // 서버에서 받아온 데이터 처리
+      const data = await res.json();
+      if (!res.ok) {
+        const errorMessage =
+          data.msg || data.message || "유저 정보를 가져오는 데 실패했습니다.";
+        throw new Error(errorMessage);
+      }
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  updateProfile: async (userID, newPassword) => {
+    try {
+      const res = await fetch(`/api/user/${userID}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password: newPassword }),
+        credentials: "include",
+      });
+      // 서버에서 받아온 데이터 처리
+      const data = await res.json();
+      if (!res.ok) {
+        const errorMessage =
+          data.msg || data.message || "프로필 수정에 실패했습니다.";
+        throw new Error(errorMessage);
+      }
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getAllStadiums: async () => {
+    try {
+      const res = await fetch(`/api/stadium`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      // 서버에서 받아온 데이터 처리
+      const data = await res.json();
+      if (!res.ok) {
+        const errorMessage =
+          data.msg || data.message || "구장 목록을 가져오는 데 실패했습니다.";
+        throw new Error(errorMessage);
+      }
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  // 특정 구장 정보 가져오기 (ID로 조회)
+  getStadiumById: async (id) => {
+    try {
+      const res = await fetch(`/api/stadium/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      // 서버에서 받아온 데이터 처리
+      const data = await res.json();
+      if (!res.ok) {
+        const errorMessage =
+          data.msg || data.message || "구장 정보를 가져오는 데 실패했습니다.";
+        throw new Error(errorMessage);
+      }
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default USER;

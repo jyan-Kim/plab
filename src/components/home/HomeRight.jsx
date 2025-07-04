@@ -1,6 +1,7 @@
 import MenuButton from "./MenuButton";
 import SignupModalContent from "../../modalContents/SignupModalContent";
 import RegisterModalContent from "../../modalContents/RegisterModalContent";
+import ProfileModalContent from "../../modalContents/ProfileModalContent"; // 프로필 수정 모달
 import { useState } from "react";
 import Modal from "../common/Modal";
 import LoginForm from "./LoginForm";
@@ -15,6 +16,7 @@ const HomeRight = () => {
   const modalContents = {
     signup: <SignupModalContent onClose={() => setOpenModal(null)} />,
     Register: <RegisterModalContent onClose={() => setOpenModal(null)} />, // 구장 등록 모달
+    Profile: <ProfileModalContent onClose={() => setOpenModal(null)} />,
   };
   return (
     <div className="flex flex-col gap-4">
@@ -31,12 +33,17 @@ const HomeRight = () => {
               <MenuButton
                 icon="👤"
                 label="내 프로필"
-                onClick={() => alert("내 프로필 클릭")}
+                onClick={() => setOpenModal("Profile")}
               />
               <MenuButton
                 icon="⚽"
                 label="매치 신청"
                 onClick={() => alert("매치 신청")}
+              />
+              <MenuButton
+                icon="🔧"
+                label="관리자 페이지"
+                onClick={() => navigate("/admin")} // 관리자 페이지로 이동
               />
             </>
           ) : (
@@ -61,8 +68,8 @@ const HomeRight = () => {
           />
           <MenuButton
             icon="📧"
-            label="문의하기"
-            onClick={() => alert("문의하기")}
+            label="구장정보"
+            onClick={() => navigate("/stadiumList")} // 구장 목록 페이지로 이동
           />
           <MenuButton
             icon="ℹ️"
