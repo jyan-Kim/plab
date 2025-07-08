@@ -1,13 +1,13 @@
 // src/contexts/AuthContext.jsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import USER from '../api/user';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import USER from "../api/user";
 
 const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -22,13 +22,23 @@ export const AuthProvider = ({ children }) => {
     try {
       setIsLoading(true);
       const data = await USER.login(email, password);
-      
+
       // 서버에서 로그인 성공 응답이 오면 (쿠키는 자동으로 설정됨)
-      if (data.msg && data.msg.includes('성공')) {
-        setUser({ email });
+      if (data.msg && data.msg.includes("성공")) {
+        // 기존 로그인 정보 클리어
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("user");
+        
+        const userInfo = {
+          email,
+          userId: data.data?.user?.id || data.userId || data.user?.userId || data.user?.id, // 서버 응답에서 userId 추출
+        };
+        console.log("AuthContext - 저장할 사용자 정보:", userInfo);
+        setUser(userInfo);
         setIsAuthenticated(true);
         // 쿠키 기반이므로 localStorage 대신 간단한 플래그만 저장
-        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("user", JSON.stringify(userInfo)); // 사용자 정보 저장
         return data;
       }
     } catch (error) {
@@ -40,7 +50,8 @@ export const AuthProvider = ({ children }) => {
 
   // 로그아웃 함수 (쿠키 기반)
   const logout = () => {
-    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("user"); // 사용자 정보도 삭제
     setUser(null);
     setIsAuthenticated(false);
     // 실제로는 서버에 로그아웃 API 호출해서 쿠키를 삭제해야 함
@@ -49,14 +60,21 @@ export const AuthProvider = ({ children }) => {
   // 앱 시작 시 로그인 상태 확인 (쿠키 기반)
   useEffect(() => {
     const checkAuthStatus = async () => {
-      const isLoggedIn = localStorage.getItem('isLoggedIn');
-      
-      if (isLoggedIn === 'true') {
-        // 쿠키 기반이므로 단순히 플래그만 확인
-        setIsAuthenticated(true);
-        setUser({ email: 'user@example.com' }); // 임시 사용자 정보
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
+      const storedUser = localStorage.getItem("user");
+
+      if (isLoggedIn === "true" && storedUser) {
+        try {
+          const userInfo = JSON.parse(storedUser);
+          setIsAuthenticated(true);
+          setUser(userInfo);
+        } catch (error) {
+          // localStorage 데이터가 손상된 경우 초기화
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("user");
+        }
       }
-      
+
       setIsLoading(false);
     };
 
@@ -71,9 +89,5 @@ export const AuthProvider = ({ children }) => {
     logout,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

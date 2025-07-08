@@ -317,9 +317,6 @@ const ADMIN = {
     try {
       const endpoints = [
         "/api/stadium",
-        "/api/stadiums",
-        "/api/stadium/list",
-        "/api/stadium/all",
       ];
 
       for (const endpoint of endpoints) {

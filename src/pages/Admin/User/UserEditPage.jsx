@@ -24,6 +24,7 @@ const UserEditPage = () => {
       setLoading(true);
       setError(null);
 
+      if (!id) return;
       // API에서 사용자 정보를 가져옵니다
       const response = await ADMIN_API.getUser(id);
       console.log("User data response:", response);

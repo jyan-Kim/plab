@@ -33,39 +33,36 @@ const StadiumEditPage = () => {
       setLoading(true);
       setError(null);
 
+      console.log("Fetching stadium with ID:", id);
+      
       // 모든 구장을 가져와서 해당 ID의 구장을 찾습니다
       const response = await ADMIN.getAllStadiums();
       console.log("Stadium data response:", response);
 
-      let stadiumData = null;
-      const stadiums = response.data || response || [];
+      let stadiumData = response.find((stadium) => stadium._id === id);
 
-      if (Array.isArray(stadiums)) {
-        stadiumData = stadiums.find(
-          (stadium) => stadium._id === id || stadium.id === id
-        );
-      }
+      console.log("Found stadium data:", stadiumData);
 
-      if (stadiumData) {
-        setStadium(stadiumData);
+      setStadium(stadiumData);
         setFormData({
-          name: stadiumData.name || "",
+          name: stadiumData?.name || "",
           location: {
-            address: stadiumData.location?.address || "",
-            latitude: stadiumData.location?.latitude || "",
-            longitude: stadiumData.location?.longitude || "",
+            province: stadiumData?.location?.province || "",
+            city: stadiumData?.location?.city || "",
+            district: stadiumData?.location?.district || "",
+            address: stadiumData?.location?.address || "",
           },
           facilities: {
-            shower: stadiumData.facilities?.shower || false,
-            freeParking: stadiumData.facilities?.freeParking || false,
-            shoesRental: stadiumData.facilities?.shoesRental || false,
-            vestRental: stadiumData.facilities?.vestRental || false,
+            ballRental: stadiumData?.facilities?.ballRental || false,
+            drinkSale: stadiumData?.facilities?.drinkSale || false,
+            freeParking: stadiumData?.facilities?.freeParking || false,
+            shoesRental: stadiumData?.facilities?.shoesRental || false,
+            shower: stadiumData?.facilities?.shower || false,
+            toiletGenderDivision: stadiumData?.facilities?.toiletGenderDivision || "남녀공용",
+            vestRental: stadiumData?.facilities?.vestRental || false,
           },
-          description: stadiumData.description || "",
+          description: stadiumData?.description || "",
         });
-      } else {
-        setError("구장을 찾을 수 없습니다.");
-      }
     } catch (err) {
       console.error("Error fetching stadium:", err);
       setError("구장 정보를 불러오는데 실패했습니다.");

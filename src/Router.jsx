@@ -12,6 +12,7 @@ import MatchEditPage from "./pages/Admin/Match/MatchEditPage";
 import Stadium from "./pages/Stadium/Stadium";
 import StadiumList from "./pages/Stadium/StadiumList";
 import SubField from "./pages/Stadium/Subfield";
+import Match from "./pages/Match/Match";
 
 
 const Router = () => {
@@ -103,6 +104,7 @@ const Router = () => {
       <Route path="/stadium/:id" element={<Stadium />} />
       <Route path="/stadiumList" element={<StadiumList />} />
       <Route path="/stadium/:stadiumId/subfields/:subFieldId" element={<SubField />} />
+      <Route path="/match/:matchId" element={<Match />} />
       {/* 잘못된 경로 처리 */}
     </Routes>
   );
