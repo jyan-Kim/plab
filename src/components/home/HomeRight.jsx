@@ -7,6 +7,8 @@ import Modal from "../common/Modal";
 import LoginForm from "./LoginForm";
 import { useAuth } from "../../contexts/AuthContext"; // 인증 상태 확인을 위한 컨텍스트
 import { useNavigate } from "react-router-dom";
+import ReservationListModal from "../../modalContents/ReservationListModal";
+
 
 const HomeRight = () => {
   const [openModal, setOpenModal] = useState(null);
@@ -17,6 +19,7 @@ const HomeRight = () => {
     signup: <SignupModalContent onClose={() => setOpenModal(null)} />,
     Register: <RegisterModalContent onClose={() => setOpenModal(null)} />, // 구장 등록 모달
     Profile: <ProfileModalContent onClose={() => setOpenModal(null)} />,
+    ReservationList: <ReservationListModal onClose={() => setOpenModal(null)} />,
   };
   return (
     <div className="flex flex-col gap-4">
@@ -37,8 +40,8 @@ const HomeRight = () => {
               />
               <MenuButton
                 icon="⚽"
-                label="매치 신청"
-                onClick={() => alert("매치 신청")}
+                label="예약 목록"
+                onClick={() => setOpenModal("ReservationList")} // 예약 목록 모달 열기
               />
               <MenuButton
                 icon="🔧"

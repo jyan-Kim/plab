@@ -28,10 +28,14 @@ export const AuthProvider = ({ children }) => {
         // 기존 로그인 정보 클리어
         localStorage.removeItem("isLoggedIn");
         localStorage.removeItem("user");
-        
+
         const userInfo = {
           email,
-          userId: data.data?.user?.id || data.userId || data.user?.userId || data.user?.id, // 서버 응답에서 userId 추출
+          userId:
+            data.data?.user?.id ||
+            data.userId ||
+            data.user?.userId ||
+            data.user?.id, // 서버 응답에서 userId 추출
         };
         console.log("AuthContext - 저장할 사용자 정보:", userInfo);
         setUser(userInfo);

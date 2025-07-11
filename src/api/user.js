@@ -6,6 +6,7 @@
 구장등록: /api/stadium
 유저정보 가져오기: /api/user/get-user-detail
 예약하기 : /api/reservation
+내 예약목록 :/api/reservation/my
 
 http://cococoa.tplinkdns.com:44445
 */
@@ -243,6 +244,28 @@ const USER = {
           data.msg ||
           data.message ||
           "매치 세부 정보를 가져오는 데 실패했습니다.";
+        throw new Error(errorMessage);
+      }
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  // 내 예약 목록 
+  getMyReservations: async () => {
+    try {
+      const res = await fetch(`/api/reservation/my`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      // 서버에서 받아온 데이터 처리
+      const data = await res.json();
+      if (!res.ok) {
+        const errorMessage =
+          data.msg || data.message || "내 예약 목록을 가져오는 데 실패했습니다.";
         throw new Error(errorMessage);
       }
       return data;
