@@ -13,6 +13,11 @@ import Stadium from "./pages/Stadium/Stadium";
 import StadiumList from "./pages/Stadium/StadiumList";
 import SubField from "./pages/Stadium/Subfield";
 import Match from "./pages/Match/Match";
+import BookList from "./pages/Admin/Book/BookList";
+import BookEdit from "./pages/Admin/Book/BookEdit";
+
+
+
 
 
 const Router = () => {
@@ -98,6 +103,22 @@ const Router = () => {
         element={
           <AdminProtectedRoute>
             <MatchEditPage />
+          </AdminProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/bookings"
+        element={
+          <AdminProtectedRoute>
+            <BookList />
+          </AdminProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/bookings/edit/:id"
+        element={
+          <AdminProtectedRoute>
+            <BookEdit />
           </AdminProtectedRoute>
         }
       />

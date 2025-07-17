@@ -7,6 +7,7 @@
 유저정보 가져오기: /api/user/get-user-detail
 예약하기 : /api/reservation
 내 예약목록 :/api/reservation/my
+프로필 이미지 업로드 : /api/upload/profile
 
 http://cococoa.tplinkdns.com:44445
 */
@@ -294,6 +295,30 @@ const USER = {
     } catch (error) {
       console.error("getCurrentUserId 에러:", error);
       return null;
+    }
+  },
+  // 프로필 이미지 업로드
+  uploadProfileImage: async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await fetch(`/api/upload/profile`, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+
+      // 서버에서 받아온 데이터 처리
+      const data = await res.json();
+      if (!res.ok) {
+        const errorMessage =
+          data.msg || data.message || "프로필 이미지 업로드에 실패했습니다.";
+        throw new Error(errorMessage);
+      }
+      return data;
+    } catch (error) {
+      throw error;
     }
   },
 };

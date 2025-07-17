@@ -1,23 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ADMIN_API } from "../../../api/admin";
-
 const MatchEditPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
-    title: "",
-    date: "",
-    time: "",
-    location: "",
-    teamA: "",
-    teamB: "",
-    status: "scheduled",
-    description: "",
+    conditions: {
+      level: "중급 이상",
+      gender: "혼성",
+      matchFormat: "5v5",
+      theme: "풋살화",
+    },
+    participantInfo: {
+      minimumPlayers: 0,
+      maximumPlayers: 0,
+    },
+    stats: "",
+    startTime: "2025-07-11T10:00:00.000Z",
+    durationMinutes: 90,
+    subField: {
+      _id: "68625da4c216490c6a9a8af7",
+    },
+    fee: 12000,
   });
-
   useEffect(() => {
     if (id) {
       fetchMatch();
@@ -25,13 +32,11 @@ const MatchEditPage = () => {
       setLoading(false);
     }
   }, [id]);
-
   const fetchMatch = async () => {
     try {
       setLoading(true);
       const response = await ADMIN_API.getMatch(id);
       console.log("Match data:", response);
-
       if (response && response.data) {
         const match = response.data;
         setFormData({
@@ -52,7 +57,7 @@ const MatchEditPage = () => {
       setLoading(false);
     }
   };
-
+  // 일반 필드용 핸들러
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -61,11 +66,21 @@ const MatchEditPage = () => {
     }));
   };
 
+  // 중첩 객체용 핸들러 (conditions, participantInfo, subField)
+  const handleNestedChange = (e, parent) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [parent]: {
+        ...prev[parent],
+        [name]: value,
+      },
+    }));
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-
       if (id) {
         await ADMIN_API.updateMatch(id, formData);
         alert("경기 정보가 성공적으로 수정되었습니다.");
@@ -73,7 +88,6 @@ const MatchEditPage = () => {
         await ADMIN_API.createMatch(formData);
         alert("경기가 성공적으로 생성되었습니다.");
       }
-
       navigate("/admin/matches");
     } catch (error) {
       console.error("Error saving match:", error);
@@ -82,11 +96,9 @@ const MatchEditPage = () => {
       setLoading(false);
     }
   };
-
   const handleCancel = () => {
     navigate("/admin/matches");
   };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -97,7 +109,6 @@ const MatchEditPage = () => {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-4xl mx-auto py-8 px-4">
@@ -107,15 +118,14 @@ const MatchEditPage = () => {
               {id ? "경기 수정" : "새 경기 등록"}
             </h1>
           </div>
-
           {error && (
             <div className="mx-6 mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
               {error}
             </div>
           )}
-
           <form onSubmit={handleSubmit} className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* 기본 정보 */}
               <div>
                 <label
                   htmlFor="title"
@@ -127,14 +137,13 @@ const MatchEditPage = () => {
                   type="text"
                   id="title"
                   name="title"
-                  value={formData.title}
+                  value={formData.title || ""}
                   onChange={handleInputChange}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="경기명을 입력하세요"
                 />
               </div>
-
               <div>
                 <label
                   htmlFor="status"
@@ -145,7 +154,7 @@ const MatchEditPage = () => {
                 <select
                   id="status"
                   name="status"
-                  value={formData.status}
+                  value={formData.status || ""}
                   onChange={handleInputChange}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -156,7 +165,6 @@ const MatchEditPage = () => {
                   <option value="cancelled">취소</option>
                 </select>
               </div>
-
               <div>
                 <label
                   htmlFor="date"
@@ -168,13 +176,12 @@ const MatchEditPage = () => {
                   type="date"
                   id="date"
                   name="date"
-                  value={formData.date}
+                  value={formData.date || ""}
                   onChange={handleInputChange}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-
               <div>
                 <label
                   htmlFor="time"
@@ -186,13 +193,12 @@ const MatchEditPage = () => {
                   type="time"
                   id="time"
                   name="time"
-                  value={formData.time}
+                  value={formData.time || ""}
                   onChange={handleInputChange}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-
               <div>
                 <label
                   htmlFor="teamA"
@@ -204,14 +210,13 @@ const MatchEditPage = () => {
                   type="text"
                   id="teamA"
                   name="teamA"
-                  value={formData.teamA}
+                  value={formData.teamA || ""}
                   onChange={handleInputChange}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="팀 A 이름을 입력하세요"
                 />
               </div>
-
               <div>
                 <label
                   htmlFor="teamB"
@@ -223,14 +228,13 @@ const MatchEditPage = () => {
                   type="text"
                   id="teamB"
                   name="teamB"
-                  value={formData.teamB}
+                  value={formData.teamB || ""}
                   onChange={handleInputChange}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="팀 B 이름을 입력하세요"
                 />
               </div>
-
               <div className="md:col-span-2">
                 <label
                   htmlFor="location"
@@ -242,14 +246,13 @@ const MatchEditPage = () => {
                   type="text"
                   id="location"
                   name="location"
-                  value={formData.location}
+                  value={formData.location || ""}
                   onChange={handleInputChange}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="경기 장소를 입력하세요"
                 />
               </div>
-
               <div className="md:col-span-2">
                 <label
                   htmlFor="description"
@@ -260,15 +263,150 @@ const MatchEditPage = () => {
                 <textarea
                   id="description"
                   name="description"
-                  value={formData.description}
+                  value={formData.description || ""}
                   onChange={handleInputChange}
                   rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="경기에 대한 추가 설명을 입력하세요"
                 />
               </div>
+              {/* 조건(conditions) */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  레벨
+                </label>
+                <input
+                  type="text"
+                  name="level"
+                  value={formData.conditions?.level || ""}
+                  onChange={(e) => handleNestedChange(e, "conditions")}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  placeholder="예: 중급 이상"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  성별
+                </label>
+                <input
+                  type="text"
+                  name="gender"
+                  value={formData.conditions?.gender || ""}
+                  onChange={(e) => handleNestedChange(e, "conditions")}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  placeholder="예: 혼성"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  경기 방식
+                </label>
+                <input
+                  type="text"
+                  name="matchFormat"
+                  value={formData.conditions?.matchFormat || ""}
+                  onChange={(e) => handleNestedChange(e, "conditions")}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  placeholder="예: 5v5"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  풋살화
+                </label>
+                <input
+                  type="text"
+                  name="theme"
+                  value={formData.conditions?.theme || ""}
+                  onChange={(e) => handleNestedChange(e, "conditions")}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  placeholder="예: 풋살화"
+                />
+              </div>
+              {/* 참가자 정보 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  최소 인원
+                </label>
+                <input
+                  type="number"
+                  name="minimumPlayers"
+                  value={formData.participantInfo?.minimumPlayers || 0}
+                  onChange={(e) => handleNestedChange(e, "participantInfo")}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  min="0"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  최대 인원
+                </label>
+                <input
+                  type="number"
+                  name="maximumPlayers"
+                  value={formData.participantInfo?.maximumPlayers || 0}
+                  onChange={(e) => handleNestedChange(e, "participantInfo")}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  min="0"
+                />
+              </div>
+              {/* 시작 시간, 경기 시간 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  시작 시간
+                </label>
+                <input
+                  type="datetime-local"
+                  name="startTime"
+                  value={
+                    formData.startTime ? formData.startTime.slice(0, 16) : ""
+                  }
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  경기 시간(분)
+                </label>
+                <input
+                  type="number"
+                  name="durationMinutes"
+                  value={formData.durationMinutes || 0}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  min="0"
+                />
+              </div>
+              {/* 구장(subField) */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  구장 ID
+                </label>
+                <input
+                  type="text"
+                  name="_id"
+                  value={formData.subField?._id || ""}
+                  onChange={(e) => handleNestedChange(e, "subField")}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  placeholder="구장(subField) ID"
+                />
+              </div>
+              {/* 참가비 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  참가비(원)
+                </label>
+                <input
+                  type="number"
+                  name="fee"
+                  value={formData.fee || 0}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  min="0"
+                />
+              </div>
             </div>
-
             <div className="flex justify-end space-x-4 mt-8">
               <button
                 type="button"
@@ -291,5 +429,4 @@ const MatchEditPage = () => {
     </div>
   );
 };
-
 export default MatchEditPage;
