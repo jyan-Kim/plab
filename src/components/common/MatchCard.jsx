@@ -1,15 +1,24 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import USER from "../../api/user";
+import ConfirmModal from "../../modalContents/ConfurmModal";
 
 const MatchCard = ({ match }) => {
   const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState(false);
 
   // 상세정보 버튼 클릭 핸들러
   const handleDetailsClick = () => {
-    navigate(`/match/${match.id}`);
+    navigate(`/match/${match._id}`);
   };
-
+  // 예약 확인 모달 열기
+  const Confirm = () => {
+    setModalOpen(true);
+  };
+  // 예약 확인 모달 닫기
+  const handleCancel = () => {
+    setModalOpen(false);
+  };
   // 예약하기 버튼 클릭 핸들러
   const handleReserveClick = async () => {
     try {
@@ -31,6 +40,7 @@ const MatchCard = ({ match }) => {
 
       await USER.reserveMatch(matchId, userId);
       alert("예약이 완료되었습니다!");
+      setModalOpen(false); // 예약 완료 후 모달 닫기
     } catch (error) {
       console.error("예약 실패:", error);
       alert("예약에 실패했습니다: " + error.message);
@@ -69,10 +79,16 @@ const MatchCard = ({ match }) => {
         </button>
         <button
           className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium py-1 px-2 sm:py-2 sm:px-4 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md text-xs sm:text-sm"
-          onClick={handleReserveClick}
+          onClick={Confirm}
         >
           예약하기
         </button>
+        <ConfirmModal
+          open={modalOpen}
+          message="이 매치를 예약하시겠습니까?"
+          onConfirm={handleReserveClick}
+          onCancel={handleCancel}
+        />
       </div>
     </div>
   );

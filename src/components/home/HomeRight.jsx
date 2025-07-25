@@ -12,7 +12,7 @@ import ReservationListModal from "../../modalContents/ReservationListModal";
 
 const HomeRight = () => {
   const [openModal, setOpenModal] = useState(null);
-  const { isAuthenticated } = useAuth(); // 인증 상태 확인
+  const { isAuthenticated, user } = useAuth(); // 인증 상태 및 유저 정보
   const navigate = useNavigate(); //
   // 모달 종류 정의
   const modalContents = {
@@ -31,7 +31,7 @@ const HomeRight = () => {
         {/*버튼을 3개씩 가로 정렬*/}
         <div className="grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-2 sm:px-4 md:px-6 min-w-0">
           {isAuthenticated ? (
-            //로그인된 사용자메뉴
+            // 로그인된 사용자 메뉴
             <>
               <MenuButton
                 icon="👤"
@@ -48,12 +48,20 @@ const HomeRight = () => {
                 label="관리자 페이지"
                 onClick={() => navigate("/admin")} // 관리자 페이지로 이동
               />
+              {/* 관리자만 구장 등록 버튼 노출 */}
+              {user?.role === "admin" && (
+                <MenuButton
+                  icon="🥅"
+                  label="구장 등록"
+                  onClick={() => setOpenModal("Register")}
+                />
+              )}
             </>
           ) : (
             // 게스트 사용자 메뉴
             <>
               <MenuButton
-                icon="📝"
+                icon="�"
                 label="회원가입"
                 onClick={() => setOpenModal("signup")}
               />
@@ -64,11 +72,6 @@ const HomeRight = () => {
               />
             </>
           )}
-          <MenuButton
-            icon="🥅"
-            label="구장 등록"
-            onClick={() => setOpenModal("Register")}
-          />
           <MenuButton
             icon="📧"
             label="구장정보"

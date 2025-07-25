@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 const SearchInput = () => {
   const [stadiumData, setStadiumData] = useState([]);
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState(query); // 디바운싱을 위한 상태
-
+  const navigate = useNavigate();
   // 디바운스된 query로만 fetch 실행
   useEffect(() => {
     if (!debouncedQuery) {
@@ -68,6 +70,9 @@ const SearchInput = () => {
           {stadiumList.map((stadium) => (
             <li
               key={stadium.id}
+              onClick={() => {
+                navigate(`/stadium/${stadium._id}`);
+              }}
               className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-sm transition-colors duration-200"
             >
               {stadium.name}

@@ -8,47 +8,53 @@ const MatchEditPage = () => {
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     conditions: {
-      level: "중급 이상",
-      gender: "혼성",
-      matchFormat: "5v5",
-      theme: "풋살화",
+      level: "",
+      gender: "",
+      matchFormat: "",
+      theme: "",
     },
+    durationMinutes: 90,
+    fee: 12000,
+    status: "모집중",
     participantInfo: {
       minimumPlayers: 0,
       maximumPlayers: 0,
     },
-    stats: "",
-    startTime: "2025-07-11T10:00:00.000Z",
-    durationMinutes: 90,
-    subField: {
-      _id: "68625da4c216490c6a9a8af7",
-    },
-    fee: 12000,
+    startTime: "",
+    subField: {},
+    subFieldId: ""
   });
+  const [subList, setSubList] = useState([]);
   useEffect(() => {
     if (id) {
       fetchMatch();
     } else {
-      setLoading(false);
+      fetchSubfields();
     }
   }, [id]);
+  const fetchSubfields = async () => {
+    try {
+      setLoading(true);
+      const data = await ADMIN_API.getAllSubFields();
+      if (data) {
+        setSubList(data);
+      }
+    } catch (err) {
+      alert(`구장 정보 불러오기 오류: ${err}`);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const fetchMatch = async () => {
     try {
       setLoading(true);
       const response = await ADMIN_API.getMatch(id);
       console.log("Match data:", response);
-      if (response && response.data) {
-        const match = response.data;
-        setFormData({
-          title: match.title || "",
-          date: match.date ? match.date.split("T")[0] : "",
-          time: match.time || "",
-          location: match.location || "",
-          teamA: match.teamA || "",
-          teamB: match.teamB || "",
-          status: match.status || "scheduled",
-          description: match.description || "",
-        });
+      if (response) {
+        const match = response;
+        match.subFieldId = match.subField._id;
+        setFormData(match);
       }
     } catch (error) {
       console.error("Error fetching match:", error);
@@ -125,25 +131,6 @@ const MatchEditPage = () => {
           )}
           <form onSubmit={handleSubmit} className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* 기본 정보 */}
-              <div>
-                <label
-                  htmlFor="title"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  경기명 *
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  name="title"
-                  value={formData.title || ""}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="경기명을 입력하세요"
-                />
-              </div>
               <div>
                 <label
                   htmlFor="status"
@@ -159,10 +146,9 @@ const MatchEditPage = () => {
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="scheduled">예정</option>
-                  <option value="ongoing">진행중</option>
-                  <option value="completed">완료</option>
-                  <option value="cancelled">취소</option>
+                  <option value="모집중">모집중</option>
+                  <option value="마감">마감</option>
+                  <option value="취소됨">취소됨</option>
                 </select>
               </div>
               <div>
@@ -173,103 +159,34 @@ const MatchEditPage = () => {
                   경기 날짜 *
                 </label>
                 <input
-                  type="date"
-                  id="date"
-                  name="date"
-                  value={formData.date || ""}
+                  type="datetime-local"
+                  id="datetime-local"
+                  name="startTime"
+                  value={formData.startTime ? formData.startTime.slice(0, 16) : ""}
                   onChange={handleInputChange}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-              <div>
-                <label
-                  htmlFor="time"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  경기 시간 *
-                </label>
-                <input
-                  type="time"
-                  id="time"
-                  name="time"
-                  value={formData.time || ""}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="teamA"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  팀 A *
-                </label>
-                <input
-                  type="text"
-                  id="teamA"
-                  name="teamA"
-                  value={formData.teamA || ""}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="팀 A 이름을 입력하세요"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="teamB"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  팀 B *
-                </label>
-                <input
-                  type="text"
-                  id="teamB"
-                  name="teamB"
-                  value={formData.teamB || ""}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="팀 B 이름을 입력하세요"
-                />
-              </div>
-              <div className="md:col-span-2">
-                <label
-                  htmlFor="location"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  경기 장소 *
-                </label>
-                <input
-                  type="text"
-                  id="location"
-                  name="location"
-                  value={formData.location || ""}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="경기 장소를 입력하세요"
-                />
-              </div>
-              <div className="md:col-span-2">
-                <label
-                  htmlFor="description"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  경기 설명
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={formData.description || ""}
-                  onChange={handleInputChange}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="경기에 대한 추가 설명을 입력하세요"
-                />
-              </div>
+              {id && (
+                <div className="md:col-span-2">
+                  <label
+                    htmlFor="location"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    경기 장소
+                  </label>
+                  <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    value={formData.subField?.stadium?.name || ""}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    readOnly
+                  />
+                </div>
+              )}
               {/* 조건(conditions) */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -334,7 +251,7 @@ const MatchEditPage = () => {
                   value={formData.participantInfo?.minimumPlayers || 0}
                   onChange={(e) => handleNestedChange(e, "participantInfo")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  min="0"
+                  min="1"
                 />
               </div>
               <div>
@@ -347,24 +264,24 @@ const MatchEditPage = () => {
                   value={formData.participantInfo?.maximumPlayers || 0}
                   onChange={(e) => handleNestedChange(e, "participantInfo")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  min="0"
+                  min="2"
                 />
               </div>
-              {/* 시작 시간, 경기 시간 */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  시작 시간
-                </label>
-                <input
-                  type="datetime-local"
-                  name="startTime"
-                  value={
-                    formData.startTime ? formData.startTime.slice(0, 16) : ""
-                  }
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
+              {id && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    현재 인원
+                  </label>
+                  <input
+                    type="number"
+                    name="currentPlayers"
+                    value={formData.participantInfo?.currentPlayers || 0}
+                    readOnly
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    min="0"
+                  />
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   경기 시간(분)
@@ -379,19 +296,43 @@ const MatchEditPage = () => {
                 />
               </div>
               {/* 구장(subField) */}
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  구장 ID
-                </label>
-                <input
-                  type="text"
-                  name="_id"
-                  value={formData.subField?._id || ""}
-                  onChange={(e) => handleNestedChange(e, "subField")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  placeholder="구장(subField) ID"
-                />
-              </div>
+              {id ? (
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    구장 ID
+                  </label>
+                  <input
+                    type="text"
+                    name="_id"
+                    value={formData.subField?._id || ""}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    placeholder="구장(subField) ID"
+                    readOnly
+                  />
+                </div>
+              ): (
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    구장 선택
+                  </label>
+                  <select
+                    id="subFieldId"
+                    name="subFieldId"
+                    value={formData.subFieldId || ""}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {
+                      subList.map((sub, idx) => {
+                        return (
+                          <option value={sub._id} key={idx}>{sub.stadium.name}/{sub.fieldName}</option>
+                        )
+                      })
+                    }
+                  </select>
+                </div>
+              )}
               {/* 참가비 */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

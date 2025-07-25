@@ -15,10 +15,13 @@ function MatchListPage() {
   const fetchMatches = async () => {
     try {
       setLoading(true);
-      const data = await ADMIN.getAllMatches();
-
+      let data = await ADMIN.getAllMatches();
       // 데이터 구조에 따라 처리
-      const matchList = data.data || data.matches || data || [];
+      const matchList = data.matches.sort((a, b) => {
+        if (a.startTime < b.startTime) return 1;
+        if (a.startTime > b.startTime) return -1;
+        return 0;
+      }) ||[];
       setMatches(Array.isArray(matchList) ? matchList : []);
     } catch (err) {
       setError("매치 목록을 불러오는데 실패했습니다.");
@@ -31,9 +34,11 @@ function MatchListPage() {
   const handleDelete = async (id) => {
     if (window.confirm("정말로 이 매치를 삭제하시겠습니까?")) {
       try {
-        await ADMIN.deleteMatch(id);
-        alert("매치가 성공적으로 삭제되었습니다!");
-        fetchMatches(); // 목록 새로고침
+        const result = await ADMIN.deleteMatch(id);
+        if (result.success) {
+          alert("매치가 성공적으로 삭제되었습니다!");
+          fetchMatches(); // 목록 새로고침
+        }
       } catch (err) {
         alert("매치 삭제에 실패했습니다. " + err.message);
         console.error(err);

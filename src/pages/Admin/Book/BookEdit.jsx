@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ADMIN from "../../../api/admin";
 
 const BookEdit = () => {
+  const navigate = useNavigate();
   const { id } = useParams(); // 예약 ID (수정 모드일 경우)
   const [formData, setFormData] = useState({
     userId: "",
@@ -35,12 +36,13 @@ const BookEdit = () => {
     }
     try {
       await ADMIN.updateBooking(formData._id, {
-        user: formData.user?._id,
-        match: formData.match?._id,
+        userId: formData.user?._id,
+        matchId: formData.match?._id,
         status: formData.status,
         reservedAt: formData.reservedAt,
       });
       alert("예약 정보가 수정되었습니다.");
+      navigate('/admin/Bookings');
       // 필요시 navigate로 목록 이동
     } catch (error) {
       alert("예약 수정 실패: " + (error.message || error));
@@ -74,12 +76,7 @@ const BookEdit = () => {
                 type="text"
                 className="px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-800 dark:text-gray-200 w-40"
                 value={formData.user?.name || ""}
-                onChange={(e) =>
-                  setFormData((f) => ({
-                    ...f,
-                    user: { ...(f.user || {}), name: e.target.value },
-                  }))
-                }
+                readOnly
               />
               <label
                 htmlFor="userEmail"
@@ -92,12 +89,7 @@ const BookEdit = () => {
                 type="email"
                 className="px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-800 dark:text-gray-200 w-56"
                 value={formData.user?.email || ""}
-                onChange={(e) =>
-                  setFormData((f) => ({
-                    ...f,
-                    user: { ...(f.user || {}), email: e.target.value },
-                  }))
-                }
+                readOnly
               />
             </div>
             <div className="flex items-center justify-between gap-2">
@@ -116,15 +108,7 @@ const BookEdit = () => {
                     ? new Date(formData.match.startTime).toISOString().slice(0, 16)
                     : ""
                 }
-                onChange={(e) =>
-                  setFormData((f) => ({
-                    ...f,
-                    match: {
-                      ...(f.match || {}),
-                      startTime: new Date(e.target.value).toISOString(),
-                    },
-                  }))
-                }
+                readOnly
               />
             </div>
             <div className="flex items-center justify-between gap-2">
@@ -162,12 +146,7 @@ const BookEdit = () => {
                     ? new Date(formData.reservedAt).toISOString().slice(0, 16)
                     : ""
                 }
-                onChange={(e) =>
-                  setFormData((f) => ({
-                    ...f,
-                    reservedAt: new Date(e.target.value).toISOString(),
-                  }))
-                }
+                readOnly
               />
             </div>
             <div className="flex justify-end pt-4">

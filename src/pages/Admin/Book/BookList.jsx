@@ -39,6 +39,12 @@ const BookList = () => {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             예약 목록
           </h2>
+          <button
+            className="ml-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-medium"
+            onClick={() => navigate("/admin")}
+          >
+            대시보드로 돌아가기
+          </button>
         </div>
 
         {Bookings.length === 0 ? (
@@ -106,7 +112,9 @@ const BookList = () => {
                   <div className="flex gap-2 p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
                     <button
                       className="flex-1 text-center bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded transition-colors text-sm font-medium"
-                      onClick={() => navigate(`/admin/bookings/edit/${reservation._id}`)}
+                      onClick={() =>
+                        navigate(`/admin/bookings/edit/${reservation._id}`)
+                      }
                     >
                       예약 수정/취소
                     </button>

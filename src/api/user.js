@@ -8,6 +8,8 @@
 예약하기 : /api/reservation
 내 예약목록 :/api/reservation/my
 프로필 이미지 업로드 : /api/upload/profile
+로그아웃 : /api/user/logout
+예약취소 : /api/reservation/:id
 
 http://cococoa.tplinkdns.com:44445
 */
@@ -58,6 +60,28 @@ const USER = {
       if (!res.ok) {
         const errorMessage =
           data.msg || data.message || "로그인에 실패했습니다.";
+        throw new Error(errorMessage);
+      }
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  //로그아웃 
+  logout: async () => {
+    try {
+      const res = await fetch(`/api/user/logout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      // 서버에서 받아온 데이터 처리
+      const data = await res.json();
+      if (!res.ok) {
+        const errorMessage =
+          data.msg || data.message || "로그아웃에 실패했습니다.";
         throw new Error(errorMessage);
       }
       return data;
@@ -228,6 +252,29 @@ const USER = {
       throw error;
     }
   },
+  // 예약 취소
+// 예약 취소
+cancelReservation: async (reservationId) => {
+  try {
+    const res = await fetch(`/api/reservation/${reservationId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status: "취소됨" }),
+      credentials: "include",
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      const errorMessage =
+        data.msg || data.message || "예약 취소에 실패했습니다.";
+      throw new Error(errorMessage);
+    }
+    return data;
+  } catch (error) {
+    throw error;
+  }
+},
   // 매치 세부 정보
   getMatchDetails: async (matchId) => {
     try {

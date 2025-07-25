@@ -5,11 +5,22 @@ import USER from "../../api/user";
 //매치의 세부페이지를 구현예정
 
 const Match = () => {
+  // 시작 시간 포맷 함수
+  const getFormattedStartTime = (isoString) => {
+    if (!isoString) return "";
+    const date = new Date(isoString);
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    const hh = String(date.getHours()).padStart(2, "0");
+    const min = String(date.getMinutes()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+  };
   const { matchId } = useParams(); // URL에서 매치 ID 가져오기
   const [match, setMatch] = useState(null); // 매치 정보를 저장할 상태
 
   useEffect(() => {
-    console.log(matchId)
+    console.log(matchId);
     const fetchData = async () => {
       try {
         const data = await USER.getMatchDetails(matchId);
@@ -52,39 +63,123 @@ const Match = () => {
   // };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="flex-1">
-        {/* 구장 사진영역*/}
-        {match?.img ? (
-          <img
-            src={match.img} // 서버에서 어떻게 오는지에따라 바꿔야함 <<<<
-            alt="매치 이미지"
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
-            <p className="text-gray-500">사진이 없습니다</p>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+      <div className="w-full max-w-6xl mx-auto py-10 px-2 md:px-6">
+        {/* 구장 사진영역 */}
+        <div className="rounded-2xl overflow-hidden shadow-xl mb-10 bg-white dark:bg-gray-800 flex items-center justify-center h-72">
+          {match?.img ? (
+            <img
+              src={match.img}
+              alt="매치 이미지"
+              className="w-full h-72 object-cover transition duration-300 ease-in-out hover:scale-105 rounded-2xl"
+            />
+          ) : (
+            <div className="w-full h-72 bg-gray-200 dark:bg-gray-700 flex items-center justify-center rounded-2xl">
+              <p className="text-gray-500 dark:text-gray-200 text-lg font-medium">
+                사진이 없습니다
+              </p>
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* 경기 정보 카드 */}
+          <div className="flex-1 bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 flex flex-col border border-gray-100 dark:border-gray-700 hover:shadow-2xl transition duration-300">
+            <h2 className="text-2xl font-bold mb-6 text-blue-700 dark:text-blue-200 tracking-tight">
+              경기 정보
+            </h2>
+            <p className="mb-3 text-gray-800 dark:text-gray-100">
+              <span className="font-semibold">상태:</span>{" "}
+              <span className="text-blue-600 dark:text-blue-400">
+                {match?.status}
+              </span>
+            </p>
+            <p className="mb-3 text-gray-800 dark:text-gray-100">
+              <span className="font-semibold">시작 시간:</span>{" "}
+              {getFormattedStartTime(match?.startTime)}
+            </p>
+            <p className="mb-3 text-gray-800 dark:text-gray-100">
+              <span className="font-semibold">경기 시간(분):</span>{" "}
+              {match?.durationMinutes}
+            </p>
+            <p className="mb-3 text-gray-800 dark:text-gray-100">
+              <span className="font-semibold">참가비:</span>{" "}
+              <span className="text-blue-600 dark:text-blue-400">
+                {match?.fee}원
+              </span>
+            </p>
+            <div className="mt-4">
+              <p className="font-semibold mb-2 text-gray-800 dark:text-gray-100">
+                조건
+              </p>
+              <ul className="ml-4 list-disc text-gray-700 dark:text-gray-200 space-y-1">
+                <li>레벨: {match?.conditions?.level}</li>
+                <li>성별: {match?.conditions?.gender}</li>
+                <li>경기 방식: {match?.conditions?.matchFormat}</li>
+                <li>테마: {match?.conditions?.theme}</li>
+              </ul>
+            </div>
           </div>
-        )}
-      </div>
-      
-      {/*실제 구장정보 (오른쪽div와 왼쪽div 나눌예정)*/}
-      <div className="flex-2 p-4 flex flex-row gap-4">
-        <div>
-          {/* 구장 정보 */}
-          
-        </div>
-        <div className="flex-2">
-          {/* 왼쪽 div*/}
-        </div>
-        <div className="flex-1">
-          {/* 오른쪽 div 예약하기 구현예정*/}
-          <button
-            
-            className="bg-blue-500 text-white py-2 px-4 rounded"
-          >
-            예약하기
-          </button>
+          {/* 참가자 정보 카드 */}
+          <div className="flex-1 bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 flex flex-col border border-gray-100 dark:border-gray-700 hover:shadow-2xl transition duration-300">
+            <h2 className="text-2xl font-bold mb-6 text-blue-700 dark:text-blue-200 tracking-tight">
+              참가자 정보
+            </h2>
+            <p className="mb-3 text-gray-800 dark:text-gray-100">
+              <span className="font-semibold">최소 인원:</span>{" "}
+              {match?.participantInfo?.minimumPlayers}
+            </p>
+            <p className="mb-3 text-gray-800 dark:text-gray-100">
+              <span className="font-semibold">최대 인원:</span>{" "}
+              {match?.participantInfo?.maximumPlayers}
+            </p>
+            <p className="mb-3 text-gray-800 dark:text-gray-100">
+              <span className="font-semibold">현재 인원:</span>{" "}
+              {match?.participantInfo?.currentPlayers}
+            </p>
+            <p className="mb-3 text-gray-800 dark:text-gray-100">
+              <span className="font-semibold">남은 자리:</span>{" "}
+              {match?.participantInfo?.spotsLeft}
+            </p>
+            <p className="mb-3 text-gray-800 dark:text-gray-100">
+              <span className="font-semibold">모집 상태:</span>{" "}
+              <span
+                className={
+                  match?.participantInfo?.isFull
+                    ? "text-red-500"
+                    : "text-green-500 dark:text-green-400"
+                }
+              >
+                {match?.participantInfo?.isFull ? "마감" : "모집중"}
+              </span>
+            </p>
+          </div>
+          {/* 구장 정보 및 예약 카드 */}
+          <div className="flex-1 bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 flex flex-col justify-between border border-gray-100 dark:border-gray-700 hover:shadow-2xl transition duration-300">
+            <div>
+              <h2 className="text-2xl font-bold mb-6 text-blue-700 dark:text-blue-200 tracking-tight">
+                구장 정보
+              </h2>
+              <p className="mb-3 text-gray-800 dark:text-gray-100">
+                <span className="font-semibold">구장명:</span>{" "}
+                {match?.subField?.fieldName}
+              </p>
+              <p className="mb-3 text-gray-800 dark:text-gray-100">
+                <span className="font-semibold">구장 ID:</span>{" "}
+                {match?.subField?._id}
+              </p>
+              <p className="mb-3 text-gray-800 dark:text-gray-100">
+                <span className="font-semibold">구장 번호:</span>{" "}
+                {match?.subField?.id}
+              </p>
+              <p className="mb-3 text-gray-800 dark:text-gray-100">
+                <span className="font-semibold">상위 구장:</span>{" "}
+                {match?.subField?.stadium?.name}
+              </p>
+            </div>
+            <button className="bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 px-6 rounded-2xl mt-8 hover:from-blue-600 hover:to-blue-800 transition font-bold shadow dark:from-blue-400 dark:to-blue-600 dark:hover:from-blue-500 dark:hover:to-blue-700">
+              예약하기
+            </button>
+          </div>
         </div>
       </div>
     </div>

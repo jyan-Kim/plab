@@ -1,12 +1,19 @@
 import React from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import USER from "../../api/user"; // 사용자 API 모듈
 
 const ProfileCard = () => {
   const { logout } = useAuth();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (window.confirm("로그아웃 하시겠습니까?")) {
-      logout();
+      try {
+        await USER.logout(); // 실제 로그아웃 API 호출
+        logout(); // 상태 초기화 등 후처리
+        // 필요하다면 alert("로그아웃 되었습니다!");
+      } catch (error) {
+        alert("로그아웃에 실패했습니다: " + error.message);
+      }
     }
   };
 
