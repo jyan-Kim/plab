@@ -20,10 +20,11 @@ const ReservationListModal = ({ onClose }) => {
     }
   };
 
-  const handleCancelReservation = async (reservationId) => {
+  const handleCancelReservation = async (userId, matchId, reservationId) => {
     if (window.confirm("예약을 취소하시겠습니까?")) {
       try {
-        await USER.cancelReservation(reservationId);
+        await USER.cancelReservation(userId, matchId, reservationId);
+
         alert("예약이 취소되었습니다.");
         fetchReservations(); // 예약 목록 새로고침
       } catch (err) {
@@ -98,9 +99,14 @@ const ReservationListModal = ({ onClose }) => {
                   </p>
                   <p className="text-gray-600 dark:text-gray-400">
                     <button
-                      onClick={() => { handleCancelReservation(reservation._id);
+                      onClick={() => {
+                        handleCancelReservation(
+                          reservation.user,
+                          reservation.match._id,
+                          reservation._id
+                        );
                         console.log("취소 id:", reservation._id, reservation);
-                       }}
+                      }}
                       className="text-red-600 hover:underline"
                     >
                       예약 취소
